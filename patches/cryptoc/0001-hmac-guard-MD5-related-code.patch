@@ -1,0 +1,33 @@
+diff --git a/hmac.c b/hmac.c
+index f920c59..bb54138 100644
+--- a/hmac.c
++++ b/hmac.c
+@@ -42,10 +42,12 @@ static void HMAC_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len) {
+   }
+ }
+ 
++#ifdef CONFIG_CRYPTOC_USE_MD5
+ void HMAC_MD5_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len) {
+   MD5_init(&ctx->hash);
+   HMAC_init(ctx, key, len);
+ }
++#endif
+ 
+ void HMAC_SHA_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len) {
+   SHA_init(&ctx->hash);
+diff --git a/include/cryptoc/hmac.h b/include/cryptoc/hmac.h
+index 4e86dec..8c67ddd 100644
+--- a/include/cryptoc/hmac.h
++++ b/include/cryptoc/hmac.h
+@@ -26,7 +26,10 @@ typedef struct LITE_HMAC_CTX {
+   uint8_t opad[64];
+ } LITE_HMAC_CTX;
+ 
++#ifdef CONFIG_CRYPTOC_USE_MD5
+ void HMAC_MD5_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len);
++#endif
++
+ void HMAC_SHA_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len);
+ void HMAC_SHA256_init(LITE_HMAC_CTX* ctx, const void* key, unsigned int len);
+ const uint8_t* HMAC_final(LITE_HMAC_CTX* ctx);
+

@@ -1,0 +1,69 @@
+diff --git a/mini-printf.c b/mini-printf.c
+index 87d0105..8fb1958 100644
+--- a/mini-printf.c
++++ b/mini-printf.c
+@@ -104,29 +104,30 @@ mini_vsnprintf(char *buffer, unsigned int buffer_len, char *fmt, va_list va)
+ 	char bf[24];
+ 	char ch;
+ 
+-	int _putc(char ch)
+-	{
+-		if ((unsigned int)((pbuffer - buffer) + 1) >= buffer_len)
+-			return 0;
+-		*(pbuffer++) = ch;
+-		*(pbuffer) = '\0';
+-		return 1;
+-	}
+-
+-	int _puts(char *s, unsigned int len)
+-	{
+-		unsigned int i;
+-
+-		if (buffer_len - (pbuffer - buffer) - 1 < len)
+-			len = buffer_len - (pbuffer - buffer) - 1;
+-
+-		/* Copy to buffer */
+-		for (i = 0; i < len; i++)
+-			*(pbuffer++) = s[i];
+-		*(pbuffer) = '\0';
+-
+-		return len;
+-	}
++#define _putc(CH) do {                                             \
++	{                                                              \
++		if ((unsigned int)((pbuffer - buffer) + 1) >= buffer_len) {} \
++		else { \
++		*(pbuffer++) = (CH);                                       \
++		*(pbuffer) = '\0';                                         \
++		} \
++	}                                                              \
++} while (0)
++
++#define _puts(S, LEN) do {                                \
++	{                                                     \
++		unsigned int i;                                   \
++                                                          \
++		if (buffer_len - (pbuffer - buffer) - 1 < (LEN))  \
++			(LEN) = buffer_len - (pbuffer - buffer) - 1;    \
++                                                          \
++		/* Copy to buffer */                              \
++		for (i = 0; i < (LEN); i++)                         \
++			*(pbuffer++) = (S)[i];                        \
++		*(pbuffer) = '\0';                                \
++                                                          \
++	}                                                     \
++} while (0)
+ 
+ 	while ((ch=*(fmt++))) {
+ 		if ((unsigned int)((pbuffer - buffer) + 1) >= buffer_len)
+@@ -172,7 +173,8 @@ mini_vsnprintf(char *buffer, unsigned int buffer_len, char *fmt, va_list va)
+ 
+ 				case 's' :
+ 					ptr = va_arg(va, char*);
+-					_puts(ptr, mini_strlen(ptr));
++					len = mini_strlen(ptr);
++					_puts(ptr, len);
+ 					break;
+ 
+ 				default:
+
